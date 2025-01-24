@@ -1,0 +1,6 @@
+setup.py
+app/__init__.py
+flask_app.egg-info/PKG-INFO
+flask_app.egg-info/SOURCES.txt
+flask_app.egg-info/dependency_links.txt
+flask_app.egg-info/top_level.txt
