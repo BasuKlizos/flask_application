@@ -21,6 +21,9 @@ class Config:
         f"mongodb+srv://{quote_plus(MONGO_USERNAME)}:{quote_plus(MONGO_PASSWORD)}@{MONGO_CLUSTER}/"
         f"{MONGO_DB}?retryWrites=true&w=majority"
     )
+    # encoded_username = quote_plus(MONGO_USERNAME)
+    # encoded_password = quote_plus(MONGO_PASSWORD)   
+    # MONGO_URI = f"mongodb+srv://{encoded_username}:{encoded_password}:@{MONGO_CLUSTER}/{MONGO_DB}?retryWrites=true&w=majority"
 
 mongo = PyMongo()
 jwt = JWTManager()

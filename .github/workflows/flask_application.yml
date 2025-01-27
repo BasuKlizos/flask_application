@@ -40,7 +40,7 @@ jobs:
           echo "MONGO_PASSWORD=${{ secrets.MONGO_PASSWORD }}" >> $GITHUB_ENV
           echo "MONGO_CLUSTER=${{ secrets.MONGO_CLUSTER }}" >> $GITHUB_ENV
           echo "MONGO_DB=${{ secrets.MONGO_DB }}" >> $GITHUB_ENV
-          echo "MONGO_URI=${{ secrets.MONGO_URI }}" >> $GITHUB_ENV
+        #   echo "MONGO_URI=${{ secrets.MONGO_URI }}" >> $GITHUB_ENV
 
       # Step 5: Run tests with coverage
       - name: Run tests with coverage
