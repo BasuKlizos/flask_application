@@ -23,3 +23,6 @@ flask_app.egg-info/
 # OS-specific files
 .DS_Store
 Thumbs.db
+
+
+.env
