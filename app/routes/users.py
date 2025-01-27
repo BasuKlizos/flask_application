@@ -92,14 +92,14 @@ def view_trash():
 @users_blueprint.route("/restore/<user_id>", methods=["POST"])
 @jwt_required()
 def restore_user(user_id):
-    user = mongo.db.trash.find_one({"original_user_id": (user_id)})
-    print(user)
+    user = mongo.db.trash.find_one({"original_user_id": ObjectId(user_id)})
     
     if not user:
-        return jsonify({"error":  "User not found"}), 404
+        return jsonify({"error": "User not found in trash"}), 404
     
     mongo.db.users.update_one({"_id": ObjectId(user_id)}, {"$set": {"deleted": False}})
-    mongo.db.trash.delete_one({"original_user_id": (user_id)})
+    mongo.db.trash.delete_one({"original_user_id": ObjectId(user_id)})
+    
     return jsonify({"message": "User restored"}), 200
 
 
@@ -107,11 +107,10 @@ def restore_user(user_id):
 @users_blueprint.route("/trash/<user_id>", methods=["DELETE"])
 @jwt_required()
 def permanent_delete_user(user_id):
-    user = mongo.db.trash.find_one({"original_user_id": (user_id)})
+    user = mongo.db.trash.find_one({"original_user_id": ObjectId(user_id)})
 
     if not user:
-        return jsonify({"error":  "User not found"}), 404
+        return jsonify({"error": "User not found in trash"}), 404
     
-    mongo.db.trash.delete_one({"original_user_id": (user_id)})
+    mongo.db.trash.delete_one({"original_user_id": ObjectId(user_id)})
     return jsonify({"message": "User permanently deleted"}), 200
-
