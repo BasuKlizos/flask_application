@@ -1,5 +1,7 @@
 .venv
 
-flask_app.egg-info
+flask_app.egg-info/
 
-gusml.egg-info
+gusml.egg-info/
+
+.coverage
