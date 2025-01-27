@@ -16,8 +16,6 @@ coverage.xml
 # Flask egg-info
 flask_app.egg-info/
 
-# Additional egg-info directories
-gusml.egg-info/
 
 # VS Code settings
 .vscode/
