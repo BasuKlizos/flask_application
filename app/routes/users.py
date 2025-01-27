@@ -45,7 +45,7 @@ def delete_user(user_id):
     if not user:
         return jsonify({"error": "User not found"}), 404
     mongo.db.trash.insert_one({
-        "original_user_id": user_id,
+        "original_user_id": ObjectId(user_id),
         "deleted_at": datetime.now(timezone.utc),
         "deleted_by": current_user,
         "reason": request.json.get("reason", "No reason provided")
