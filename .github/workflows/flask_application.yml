@@ -1,4 +1,4 @@
-name: Python CI
+name: Flask Application CI
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,7 +19,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.9'
+          python-version: '3.13.1'  
 
       - name: Install dependencies
         run: |
@@ -29,7 +29,7 @@ jobs:
 
       - name: Run tests with coverage
         run: |
-          pytest --cov=flask_app tests/
+          pytest -s
 
       - name: Upload coverage results
         uses: codecov/codecov-action@v2
