@@ -42,10 +42,9 @@ jobs:
           echo "MONGO_DB=${{ secrets.MONGO_DB }}" >> $GITHUB_ENV
         #   echo "MONGO_URI=${{ secrets.MONGO_URI }}" >> $GITHUB_ENV
       
-      # Step 5: For modul 
+      # Step 5: Set PYTHONPATH (ensure Python can find config.py)
       - name: Set PYTHONPATH
-        run: |
-          echo "PYTHONPATH=$(pwd)"
+        run: echo "PYTHONPATH=$(pwd)" >> $GITHUB_ENV
 
       # Step 6: Run tests with coverage
       - name: Run tests with coverage
