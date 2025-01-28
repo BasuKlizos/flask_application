@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  flask-app:
+    build: .
+    container_name: flask_app
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/flask_app
+      - SECRET_KEY=your-secret-key
+      - JWT_SECRET_KEY=your-jwt-secret-key
+    depends_on:
+      - mongo
+    networks:
+      - flask-network
+
+  mongo:
+    image: mongo:latest
+    container_name: mongo_db
+    ports:
+      - "27017:27017"
+    networks:
+      - flask-network
+
+networks:
+  flask-network:
+    driver: bridge
