@@ -3,27 +3,8 @@ from flask_jwt_extended import JWTManager
 from flask_pymongo import PyMongo
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
-# from config import Config
-import os
-from urllib.parse import quote_plus
-from dotenv import load_dotenv
+from config import Config 
 
-
-load_dotenv()
-class Config:
-    SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key")
-    JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "your-jwt-secret-key")
-    MONGO_USERNAME = os.getenv("MONGO_USERNAME", "basudev")
-    MONGO_PASSWORD = os.getenv("MONGO_PASSWORD", "UcjOArSo3yjUaP6C")
-    MONGO_CLUSTER = os.getenv("MONGO_CLUSTER", "questerdb.a26wb.mongodb.net")
-    MONGO_DB = os.getenv("MONGO_DB", "flask_app")
-    MONGO_URI = (
-        f"mongodb+srv://{quote_plus(MONGO_USERNAME)}:{quote_plus(MONGO_PASSWORD)}@{MONGO_CLUSTER}/"
-        f"{MONGO_DB}?retryWrites=true&w=majority"
-    )
-    # encoded_username = quote_plus(MONGO_USERNAME)
-    # encoded_password = quote_plus(MONGO_PASSWORD)   
-    # MONGO_URI = f"mongodb+srv://{encoded_username}:{encoded_password}:@{MONGO_CLUSTER}/{MONGO_DB}?retryWrites=true&w=majority"
 
 mongo = PyMongo()
 jwt = JWTManager()
