@@ -1,11 +1,12 @@
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import create_access_token, create_refresh_token
+from flask_jwt_extended import create_access_token, create_refresh_token, get_jwt_identity
 from werkzeug.security import check_password_hash, generate_password_hash
 from app.models import database_models
 from .. import mongo
 
 
-auth_blueprint = Blueprint("auth", __name__, url_prefix="/auth")
+
+auth_blueprint = Blueprint("auth", __name__, url_prefix="/auth")  
 
 @auth_blueprint.route("/signup", methods=["POST"])
 def signup():

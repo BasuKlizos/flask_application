@@ -5,6 +5,8 @@ from .. import mongo
 from datetime import datetime, timezone
 from app.models import database_models
 from werkzeug.security import generate_password_hash
+from app.utils import role_utils
+from app.utils.role_utils import role_required
 
 users_blueprint = Blueprint("users", __name__, url_prefix="/users")
 
@@ -123,6 +125,7 @@ def view_trash():
 
 @users_blueprint.route("/restore/<user_id>", methods=["POST"])
 @jwt_required()
+@role_utils.role_required("admin")
 def restore_user(user_id):
     user = mongo.db.trash.find_one({"original_user_id": ObjectId(user_id)})
     
@@ -146,3 +149,20 @@ def permanent_delete_user(user_id):
     
     mongo.db.trash.delete_one({"original_user_id": ObjectId(user_id)})
     return jsonify({"message": "User permanently deleted"}), 200
+
+
+
+@users_blueprint.route("/promote/<user_id>", methods=["POST"])
+@jwt_required()
+@role_required("admin")  # Only an admin can promote a user
+def promote_to_admin(user_id):
+    user = mongo.db.users.find_one({"_id": ObjectId(user_id)})
+    
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+    
+    if user["role"] == "admin":
+        return jsonify({"message": "User is already an admin"}), 200
+
+    mongo.db.users.update_one({"_id": ObjectId(user_id)}, {"$set": {"role": "admin"}})
+    return jsonify({"message": f"User {user['username']} promoted to admin"}), 200

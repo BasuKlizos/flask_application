@@ -5,6 +5,7 @@ def get_user_model():
         "username": None,
         "email": None,
         "password": None,  # Hashed password
+        "role": "user",
         "created_at": datetime.now(timezone.utc),
         "updated_at": datetime.now(timezone.utc),
         "deleted": False
