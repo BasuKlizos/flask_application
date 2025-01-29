@@ -7,7 +7,7 @@ from datetime import timezone, datetime
 def test_get_users(client, setup_user_in_db, app):
     with app.app_context():
         # Generate access token
-        access_token = create_access_token(identity="user_id")
+        access_token = create_access_token(identity=setup_user_in_db["email"])
     
     headers = {"Authorization": f"Bearer {access_token}"}
     response = client.get("/users/", headers=headers)
