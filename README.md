@@ -1,47 +1,82 @@
-Project Name:
-    Welcome to the project! This project is an API built using Flask, a Python web framework. The project aims to provide a RESTful API for managing users.
+User Management API
+    A Flask-based API for managing users, including registration, login, and CRUD operations.
 
 Features:
     User registration
-    User login
-    User retrieval
-    User update
-    User deletion
+    User login (JWT Authentication)
+    CRUD operations (Create, Read, Update, Delete)
+    User promotion/demotion (admin role)
+    Soft-delete and restore users
+    Permanent delete from trash
 
 Getting Started:
-    Clone the repository.
-    Set up a virtual environment.
-    Install the dependencies.
-    Run the application.
+    Clone the repository:
 
-Dependencies:
-    Flask
-    PyMongo
-    Flask-JWT
-    Flask-Limiter
+    bash
+        git clone https://github.com/your-username/project-name.git
+        cd project-name
 
-API Documentation:
-    Please refer to the docs directory for API documentation.
+
+Set up a virtual environment:
+
+    bash
+        python3 -m venv venv
+        
+        source venv/bin/activate  # For macOS/Linux
+        
+        venv\Scripts\activate  # For Windows
+
+
+Install dependencies:
+
+    bash
+        pip install -r requirements.txt
+
+Set up environment variables in a .env file:
+
+.env
+    SECRET_KEY=your-secret-key
+    JWT_SECRET_KEY=your-jwt-secret-key
+    MONGO_USERNAME=your-mongo-username
+    MONGO_PASSWORD=your-mongo-password
+    MONGO_CLUSTER=your-mongo-cluster-url
+    MONGO_DB=your-database-name
+    UPLOAD_FOLDER=your-upload-folder-path
+
+
+Run the application:
+
+bash
+    python main.py
+
+
+Docker:
+    Build the Docker image:
+
+bash
+    docker-compose build
+
+Run the application:
+    bash
+        docker-compose up
+
+API Endpoints:
+    POST /auth/signup: Register a user.
+    POST /auth/login: Login and get JWT token.
+    GET /users/: Get all users (admin only).
+    GET /users/<user_id>: Get user by ID.
+    PUT /users/<user_id>: Update user (admin only).
+    DELETE /users/<user_id>: Soft-delete user (admin only).
+    POST /users/batch-delete: Soft-delete multiple users (admin only).
+    GET /users/trash: View soft-deleted users (admin only).
+    POST /users/restore/<user_id>: Restore soft-deleted user.
+    DELETE /users/trash/<user_id>: Permanently delete from trash.
+    POST /users/promote/<user_id>: Promote user to admin.
+    POST /users/admin/demote/<user_id>: Demote admin to user.
+
 
 Testing:
-    To run the tests, use the following command: pytest in bash
+    Run tests with pytest:
 
-
-Contact:
-For any inquiries or issues, please reach out to your-basudev@klizos.com.
-
-Acknowledgements:
-    This project is built with the help of the following libraries and resources:
-
-    Flask
-    PyMongo
-    Flask-JWT
-    Flask-Limiter
-
-Future Work:
-    Implement user authentication and authorization.
-    Add pagination to the user retrieval endpoint.
-    Implement user search functionality.
-
-Contributors:
-Basudev Samanta
+    bash
+        pytest
