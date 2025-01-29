@@ -24,8 +24,5 @@ flask_app.egg-info/
 .DS_Store
 Thumbs.db
 
-
-.env
-
 # Ignore uploaded media files
 /static/media/
