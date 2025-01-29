@@ -15,3 +15,6 @@ class Config:
         f"mongodb+srv://{quote_plus(MONGO_USERNAME)}:{quote_plus(MONGO_PASSWORD)}@{MONGO_CLUSTER}/"
         f"{MONGO_DB}?retryWrites=true&w=majority"
     )
+    
+    UPLOAD_FOLDER = os.getenv("UPLOAD_FOLDER", os.path.join("C:", "Users", "Basudev Samanta", "Desktop", "first_app", "flask_app", "static", "media"))
+    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
