@@ -18,9 +18,15 @@ def signup():
 
     hashed_password = generate_password_hash(data["password"])
     
+    role = data.get("role", "user")
+
+    if role not in ["user", "admin"]:
+        return jsonify({"error": "Invalid role specified"}), 400
+
     user_model["username"] = data["username"]
     user_model["email"] = data["email"]
     user_model["password"] = hashed_password
+    user_model["role"] = role
     
     mongo.db.users.insert_one(user_model)
 

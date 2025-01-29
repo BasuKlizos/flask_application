@@ -8,12 +8,15 @@ def role_required(role):
     def decorator(fn):
         @wraps(fn)
         def wrapper(*args, **kwargs):
-            user_id = get_jwt_identity()  # Get the logged-in user ID from the token
+            
+            user_id = get_jwt_identity()
+            
             user = mongo.db.users.find_one({"_id": ObjectId(user_id)})
             if not user:
                 return jsonify({"error": "User not found"}), 404
+           
             if user["role"] != role:  # Check if the user has the correct role
-                return jsonify({"error": "Access forbidden"}), 403  # Forbidden access for non-admins
+                return jsonify({"error": "Access forbidden"}), 403  
             return fn(*args, **kwargs)
         return wrapper
     return decorator  

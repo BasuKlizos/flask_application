@@ -5,19 +5,20 @@ from .. import mongo
 from datetime import datetime, timezone
 from app.models import database_models
 from werkzeug.security import generate_password_hash
-from app.utils import role_utils
 from app.utils.role_utils import role_required
 
 users_blueprint = Blueprint("users", __name__, url_prefix="/users")
 
 @users_blueprint.route("/", methods=["GET"])
 @jwt_required()
+@role_required("admin")
 def get_users():
     users = mongo.db.users.find({"deleted": False})
     return jsonify([{
         "id": str(user["_id"]),
         "username": user["username"],
         "email": user["email"],
+        "role": user["role"],
         "deleted": user.get("deleted", False),
         "updated_at": user.get("updated_at", None),
         "created_at": user.get("created_at", None)
@@ -40,6 +41,7 @@ def get_user_by_id(user_id):
 
 @users_blueprint.route("/<user_id>", methods=["PUT"])
 @jwt_required()
+@role_required("admin")
 def update_user_by_id(user_id):
     user = mongo.db.users.find_one({"_id": ObjectId(user_id)}, {"deleted": False})
     if not user:
@@ -62,6 +64,7 @@ def update_user_by_id(user_id):
 
 @users_blueprint.route("/<user_id>", methods=["DELETE"])
 @jwt_required()
+@role_required("admin")
 def delete_user(user_id):
     current_user = get_jwt_identity()
 
@@ -84,6 +87,7 @@ def delete_user(user_id):
 
 @users_blueprint.route("/batch-delete", methods=["POST"])
 @jwt_required()
+@role_required("admin")
 def batch_delete_users():
     data = request.json
     user_ids = data.get("user_ids", [])
@@ -113,6 +117,7 @@ def batch_delete_users():
 
 @users_blueprint.route("/trash", methods=["GET"])
 @jwt_required()
+@role_required("admin")
 def view_trash():
     trashed_users = mongo.db.trash.find()
     return jsonify([{
@@ -125,7 +130,7 @@ def view_trash():
 
 @users_blueprint.route("/restore/<user_id>", methods=["POST"])
 @jwt_required()
-# @role_utils.role_required("admin")
+@role_required("admin")
 def restore_user(user_id):
     user = mongo.db.trash.find_one({"original_user_id": ObjectId(user_id)})
     
@@ -141,6 +146,7 @@ def restore_user(user_id):
 
 @users_blueprint.route("/trash/<user_id>", methods=["DELETE"])
 @jwt_required()
+@role_required("admin")
 def permanent_delete_user(user_id):
     user = mongo.db.trash.find_one({"original_user_id": ObjectId(user_id)})
 
@@ -152,17 +158,33 @@ def permanent_delete_user(user_id):
 
 
 
-# @users_blueprint.route("/promote/<user_id>", methods=["POST"])
-# @jwt_required()
-# @role_required("admin")  # Only an admin can promote a user
-# def promote_to_admin(user_id):
-#     user = mongo.db.users.find_one({"_id": ObjectId(user_id)})
+@users_blueprint.route("/promote/<user_id>", methods=["POST"])
+@jwt_required()
+@role_required("admin")  # Only an admin can promote a user
+def promote_to_admin(user_id):
+    user = mongo.db.users.find_one({"_id": ObjectId(user_id)})
     
-#     if not user:
-#         return jsonify({"error": "User not found"}), 404
+    if not user:
+        return jsonify({"error": "User not found"}), 404
     
-#     if user["role"] == "admin":
-#         return jsonify({"message": "User is already an admin"}), 200
+    if user["role"] == "admin":
+        return jsonify({"message": "User is already an admin"}), 200
 
-#     mongo.db.users.update_one({"_id": ObjectId(user_id)}, {"$set": {"role": "admin"}})
-#     return jsonify({"message": f"User {user['username']} promoted to admin"}), 200
+    mongo.db.users.update_one({"_id": ObjectId(user_id)}, {"$set": {"role": "admin"}})
+    return jsonify({"message": f"User {user['username']} promoted to admin"}), 200
+
+
+@users_blueprint.route("/admin/demote/<user_id>", methods=["POST"])
+@jwt_required()
+@role_required("admin")
+def demote_user(user_id):
+    user = mongo.db.users.find_one({"_id": ObjectId(user_id)})
+
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    if user["role"] == "user":
+        return jsonify({"message": "User is already a regular user"}), 200
+
+    mongo.db.users.update_one({"_id": ObjectId(user_id)}, {"$set": {"role": "user"}})
+    return jsonify({"message": f"User {user['username']} demoted to user"}), 200
