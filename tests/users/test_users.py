@@ -18,8 +18,19 @@ def test_get_users(client, setup_user_in_db, app):
 
 
 def test_get_user_by_id(client, setup_user_in_db, app):
+    # with app.app_context():
+    #     access_token = create_access_token(identity="user_id")
+    
+    # user_data = setup_user_in_db
+    # user_id = str(mongo.db.users.find_one({"email": user_data["email"]})["_id"])
+    
+    # headers = {"Authorization": f"Bearer {access_token}"}
+    # response = client.get(f"/users/{user_id}", headers=headers)
+    
+    # assert response.status_code == 200
+    # assert response.json["email"] == user_data["email"]
     with app.app_context():
-        access_token = create_access_token(identity="user_id")
+        access_token = create_access_token(identity=setup_user_in_db["email"])
     
     user_data = setup_user_in_db
     user_id = str(mongo.db.users.find_one({"email": user_data["email"]})["_id"])
@@ -33,7 +44,7 @@ def test_get_user_by_id(client, setup_user_in_db, app):
     
 def test_update_user_by_id(client, setup_user_in_db, app):
     with app.app_context():
-        access_token = create_access_token(identity="user_id")
+        access_token = create_access_token(identity=setup_user_in_db["email"])
     
     user_data = setup_user_in_db
     user_id = str(mongo.db.users.find_one({"email": user_data["email"]})["_id"])
@@ -48,7 +59,7 @@ def test_update_user_by_id(client, setup_user_in_db, app):
     
 def test_delete_user(client, setup_user_in_db, app):
     with app.app_context():
-        access_token = create_access_token(identity="user_id")
+        access_token = create_access_token(identity=setup_user_in_db["email"])
     
     user_data = setup_user_in_db
     user_id = str(mongo.db.users.find_one({"email": user_data["email"]})["_id"])
@@ -62,7 +73,7 @@ def test_delete_user(client, setup_user_in_db, app):
     
 def test_batch_delete_users(client, setup_user_in_db, app):
     with app.app_context():
-        access_token = create_access_token(identity="user_id")
+        access_token = create_access_token(identity=setup_user_in_db["email"])
     
     user_data = setup_user_in_db
     user_id = str(mongo.db.users.find_one({"email": user_data["email"]})["_id"])
@@ -77,7 +88,7 @@ def test_batch_delete_users(client, setup_user_in_db, app):
 
 def test_view_trash(client, setup_user_in_db, app):
     with app.app_context():
-        access_token = create_access_token(identity="user_id")
+        access_token = create_access_token(identity=setup_user_in_db["email"])
     
     headers = {"Authorization": f"Bearer {access_token}"}
     response = client.get("/users/trash", headers=headers)
@@ -88,7 +99,7 @@ def test_view_trash(client, setup_user_in_db, app):
 
 def test_restore_user(client, setup_user_in_db, app):
     with app.app_context():
-        access_token = create_access_token(identity="user_id")
+        access_token = create_access_token(identity=setup_user_in_db["email"])
 
     user_data = setup_user_in_db
     user_id = str(mongo.db.users.find_one({"email": user_data["email"]})["_id"])
@@ -115,7 +126,7 @@ def test_restore_user(client, setup_user_in_db, app):
 
 def test_permanent_delete_user(client, setup_user_in_db, app):
     with app.app_context():
-        access_token = create_access_token(identity="user_id")
+        access_token = create_access_token(identity=setup_user_in_db["email"])
 
     user_data = setup_user_in_db
     user_id = str(mongo.db.users.find_one({"email": user_data["email"]})["_id"])

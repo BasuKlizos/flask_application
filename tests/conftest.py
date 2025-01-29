@@ -39,7 +39,7 @@ def setup_user_in_db(user_data):
     
     hashed_password = generate_password_hash(user_data["password"])
     
-    user_data["role"] = "admin"
+    # user_data["role"] = "admin"
     
     existing_user = mongo.db.users.find_one({"email": user_data["email"]})
     
