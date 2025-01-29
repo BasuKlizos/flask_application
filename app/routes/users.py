@@ -47,7 +47,7 @@ def update_user_by_id(user_id):
     if not user:
         return jsonify({"error": "User not found"}), 404
     
-    allowed_fields = ["username", "email", "password"]
+    allowed_fields = ["username", "email", "password", "role"]
     updated_data = {}
 
     for field in allowed_fields:

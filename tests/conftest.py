@@ -22,7 +22,8 @@ def user_data():
     return {
         "username": "user",
         "email": "user@example.com",
-        "password": "userpassword"
+        "password": "userpassword",
+        "role": "admin"
     }
 
 @pytest.fixture
@@ -38,6 +39,8 @@ def setup_user_in_db(user_data):
     
     hashed_password = generate_password_hash(user_data["password"])
     
+    user_data["role"] = "admin"
+    
     existing_user = mongo.db.users.find_one({"email": user_data["email"]})
     
     if not existing_user:
@@ -46,6 +49,7 @@ def setup_user_in_db(user_data):
         user_model["username"] = user_data["username"]
         user_model["email"] = user_data["email"]
         user_model["password"] = hashed_password
+        user_model["role"] = user_data["role"]
         user_model["deleted"] = False
         user_model["created_at"] = user_model["updated_at"] = datetime.now(timezone.utc)
         
