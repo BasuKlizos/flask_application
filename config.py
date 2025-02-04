@@ -5,8 +5,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class Config:
-    SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key")
-    JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "your-jwt-secret-key")
+    SECRET_KEY = os.getenv("SECRET_KEY", "9e7d55ae37089f065a14f8d6e6e1c782f39212f5")
+    JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "ff1abfbfdad323ad0fcd5a451a24deebbc150f3c")
     
     MONGO_USERNAME = os.getenv("MONGO_USERNAME", "basudev")
     MONGO_PASSWORD = os.getenv("MONGO_PASSWORD", "UcjOArSo3yjUaP6C")

@@ -1,3 +1,4 @@
+import re
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import (
     create_access_token,
@@ -11,6 +12,8 @@ from .. import mongo
 
 auth_blueprint = Blueprint("auth", __name__)
 
+EMAIL_REGEX = r'^[a-zA-Z0-9][a-zA-Z0-9_.+-]*@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$'
+
 
 @auth_blueprint.route("/", methods=["GET"])
 def index():
@@ -22,18 +25,42 @@ def signup():
     data = request.json
     if not data or not all(k in data for k in ("username", "email", "password")):
         return jsonify({"error": "Invalid input"}), 400
+    
+    username = data["username"].strip()
+    email = data["email"].strip()
+    password = data["password"].strip()
 
-    user_model = database_models.get_user_model()
+    # Username validation
+    if len(username) < 3 or len(username) > 20:
+        return jsonify({"error": "Username must be between 3 and 20 characters"}), 400
+    
+    if not username.isalnum():
+        return jsonify({"error": "Username must be alphanumeric"}), 400
+    
+    # Email validation
+    if not re.match(EMAIL_REGEX, email):
+        return jsonify({"error": "Invalid email format"}), 400
+    
+    # Username and email already exists
 
-    hashed_password = generate_password_hash(data["password"])
-
-    role = data.get("role", "user")
+    if mongo.db.users.find_one({"username": username}):
+        return jsonify({"error": "Username already exists"}), 400
+    
+    if mongo.db.users.find_one({"email": email}):
+        return jsonify({"error": "Email already exists"}), 400
+         
+    role = data.get("role", "user").strip().lower()
 
     if role not in ["user", "admin"]:
         return jsonify({"error": "Invalid role specified"}), 400
 
-    user_model["username"] = data["username"]
-    user_model["email"] = data["email"]
+    hashed_password = generate_password_hash(password)
+    
+    user_model = database_models.get_user_model()
+
+    
+    user_model["username"] = username
+    user_model["email"] = email
     user_model["password"] = hashed_password
     user_model["role"] = role
 
@@ -42,22 +69,22 @@ def signup():
     return jsonify({"message": "User registered successfully"}), 201
 
 
-@auth_blueprint.route("/login", methods=["POST"])
-def login():
-    data = request.json
-    if (
-        not data
-        or not all(k in data for k in ("email", "password"))
-        or not data["email"].strip()
-        or not data["password"].strip()
-    ):
-        return jsonify({"error": "Email and password are required"}), 400
+# @auth_blueprint.route("/login", methods=["POST"])
+# def login():
+#     data = request.json
+#     if (
+#         not data
+#         or not all(k in data for k in ("email", "password"))
+#         or not data["email"].strip()
+#         or not data["password"].strip()
+#     ):
+#         return jsonify({"error": "Email and password are required"}), 400
 
-    user = mongo.db.users.find_one({"email": data["email"]})
+#     user = mongo.db.users.find_one({"email": data["email"]})
 
-    if user and check_password_hash(user["password"], data["password"]):
-        access_token = create_access_token(identity=str(user["_id"]))
-        # refresh_token = create_refresh_token(identity=str(user["_id"]))
-        return jsonify({"access_token": access_token}), 200
+#     if user and check_password_hash(user["password"], data["password"]):
+#         access_token = create_access_token(identity=str(user["_id"]))
+#         # refresh_token = create_refresh_token(identity=str(user["_id"]))
+#         return jsonify({"access_token": access_token}), 200
 
-    return jsonify({"error": "Invalid credentials"}), 401
+#     return jsonify({"error": "Invalid credentials"}), 401

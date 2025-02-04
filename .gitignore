@@ -24,9 +24,6 @@ flask_app.egg-info/
 # Ignore uploaded media files
 /static/media/
 
-
 .dockerignore
 
 .env
-
-__pycache__

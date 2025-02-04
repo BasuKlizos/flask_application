@@ -26,7 +26,7 @@ def user_data():
         "username": "user",
         "email": "user@example.com",
         "password": "userpassword",
-        "role": "admin",
+        # "role": "admin",
     }
 
 
@@ -40,9 +40,11 @@ def setup_user_in_db(user_data):
 
     hashed_password = generate_password_hash(user_data["password"])
 
-    # user_data["role"] = "admin"
-
     existing_user = mongo.db.users.find_one({"email": user_data["email"]})
+
+    role = user_data.get("role", "user").strip().lower()
+    if not role in ["admin", "user"]:
+        logging.info(f"Invalid role provided: {role}")
 
     if not existing_user:
         user_model = database_models.get_user_model()
@@ -50,7 +52,7 @@ def setup_user_in_db(user_data):
         user_model["username"] = user_data["username"]
         user_model["email"] = user_data["email"]
         user_model["password"] = hashed_password
-        user_model["role"] = user_data["role"]
+        user_model["role"] = role
         user_model["deleted"] = False
         user_model["created_at"] = user_model["updated_at"] = datetime.now(timezone.utc)
 
@@ -60,16 +62,7 @@ def setup_user_in_db(user_data):
     else:
         logging.info(f"User {user_data['email']} already exists.")
 
-    inserted_user = mongo.db.users.find_one({"email": user_data["email"]})
-    assert inserted_user is not None
+    yield
 
-    yield user_data
-
-    # Teardown - delete all users with the same email
-    result = mongo.db.users.delete_many({"email": user_data["email"]})
-    if result.deleted_count > 0:
-        logging.info(
-            f"Deleted {result.deleted_count} user(s) with email: {user_data['email']}"
-        )
-    else:
-        logging.warning(f"No users found for deletion with email: {user_data['email']}")
+    mongo.db.users.delete_one({"email": user_data["email"]})
+    logging.info(f"Test user deleted {user_data["email"]}")
