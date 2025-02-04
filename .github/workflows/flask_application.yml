@@ -32,7 +32,7 @@ jobs:
           pip install -e .
 
       # Step 4: Set environment variables from GitHub Secrets
-      - name: Set environment variables
+      - name: Set environment variabes
         run: |
           echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> $GITHUB_ENV
           echo "JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}" >> $GITHUB_ENV

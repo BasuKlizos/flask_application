@@ -20,9 +20,11 @@ flask_app.egg-info/
 # VS Code settings
 .vscode/
 
-# OS-specific files
-.DS_Store
-Thumbs.db
 
 # Ignore uploaded media files
 /static/media/
+
+
+.dockerignore
+
+.env
