@@ -1,9 +1,6 @@
-### change the name of Docker flie : DockerFile -> Dockerfile
-
-
 # User Management API
 
-A **Flask-based API** for managing users, including registration, login, and CRUD operations.
+**Flask-based API** for managing users, including registration, login, and CRUD operations.
 
 ---
 
