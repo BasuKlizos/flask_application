@@ -1,5 +1,38 @@
 # User Management API
 
+**Flask-based API** for managing users, including resgistration, login, and CRUD operations.
+
+## Features
+- **User Registration**
+- **User login (JWT Authentication)**
+- **CRUD operations** (Create, Read, Update, Delete)
+- **User promotion/demotion** (admin role)
+- **User can upload image**
+- **Soft-delete and restore users**
+- **Permanent delete from trash**
+
+## Getting started
+
+Follow these steps to set up the project locally:
+
+## Clone the repository
+- **bash:** git clone https://github.com/BasuKlizos/flask_application.git
+- cd flask_application
+
+## Setup a virtual enviroment
+- **bash** 
+  **Run:** python -m venv .venv
+    
+    **For macOS/Linux:** source .venv/bin/activate  
+    
+    **For Windows:** .venv\Scripts\activate  
+
+## Install dependencies
+- **bash**
+    - python -m pip install --upgrade pip
+    - pip install -r requirements.txt
+<!-- # User Management API
+
 **Flask-based API** for managing users, including registration, login, and CRUD operations.
 
 ---
@@ -72,4 +105,4 @@ Your application will be available at http://localhost:5000.
 ```To run tests for this application, use pytest:
 
 ```bash
-    pytest
+    pytest -->

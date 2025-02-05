@@ -25,3 +25,5 @@ flask_app.egg-info/
 /static/media/
 
 .env
+
+__pycache__
