@@ -15,27 +15,26 @@ users_blueprint = Blueprint("users", __name__, url_prefix="/users")
 @role_required("admin")
 def get_users():
     users = mongo.db.users.find({"deleted": False})
-    return (
-        jsonify(
-            [
-                {
-                    "id": str(user["_id"]),
-                    "username": user["username"],
-                    "email": user["email"],
-                    "role": user["role"],
-                    "deleted": user.get("deleted", False),
-                    "updated_at": user.get("updated_at", None),
-                    "created_at": user.get("created_at", None),
-                }
-                for user in users
-            ]
-        ),
-        200,
-    )
+    print(users)
+    response_data = []
+
+    for user in users:
+        response_data.append({
+            "id": str(user["_id"]),
+            "username":user["username"],
+            "email": user["email"],
+            "role": user["role"],
+            "deleted": user.get("deleted", False),
+            "created_at": user.get("created_at"),
+            "updated_at": user.get("updated_at")
+        })
+    
+    return jsonify(response_data),200
 
 
 @users_blueprint.route("/<user_id>", methods=["GET"])
 @jwt_required()
+@role_required("admin")
 def get_user_by_id(user_id):
     user = mongo.db.users.find_one({"_id": ObjectId(user_id)}, {"deleted": False})
     if not user:
@@ -63,7 +62,7 @@ def update_user_by_id(user_id):
     if not user:
         return jsonify({"error": "User not found"}), 404
 
-    allowed_fields = ["username", "email", "password", "role"]
+    allowed_fields = ["username", "email", "password"]
     updated_data = {}
 
     for field in allowed_fields:
@@ -139,20 +138,17 @@ def batch_delete_users():
 @role_required("admin")
 def view_trash():
     trashed_users = mongo.db.trash.find()
-    return (
-        jsonify(
-            [
-                {
-                    "id": str(user["original_user_id"]),
-                    "deleted_at": user["deleted_at"],
-                    "deleted_by": user["deleted_by"],
-                    "reason": user["reason"],
-                }
-                for user in trashed_users
-            ]
-        ),
-        200,
-    )
+    response_trashed_users = []
+
+    for trashed_user in trashed_users:
+        response_trashed_users.append({
+            "id": str(trashed_user["original_user_id"]),
+            "deleted_at":trashed_user["deleted_at"],
+            "deleted_by": trashed_user["deleted_by"],
+            "reason": trashed_user["reason"],
+        })
+    
+    return jsonify(response_trashed_users),200
 
 
 @users_blueprint.route("/restore/<user_id>", methods=["POST"])
@@ -183,33 +179,33 @@ def permanent_delete_user(user_id):
     return jsonify({"message": "User permanently deleted"}), 200
 
 
-@users_blueprint.route("/promote/<user_id>", methods=["POST"])
-@jwt_required()
-@role_required("admin")  # Only an admin can promote a user
-def promote_to_admin(user_id):
-    user = mongo.db.users.find_one({"_id": ObjectId(user_id)})
+# @users_blueprint.route("/promote/<user_id>", methods=["POST"])
+# @jwt_required()
+# @role_required("admin")  # Only an admin can promote a user
+# def promote_to_admin(user_id):
+#     user = mongo.db.users.find_one({"_id": ObjectId(user_id)})
 
-    if not user:
-        return jsonify({"error": "User not found"}), 404
+#     if not user:
+#         return jsonify({"error": "User not found"}), 404
 
-    if user["role"] == "admin":
-        return jsonify({"message": "User is already an admin"}), 200
+#     if user["role"] == "admin":
+#         return jsonify({"message": "User is already an admin"}), 200
 
-    mongo.db.users.update_one({"_id": ObjectId(user_id)}, {"$set": {"role": "admin"}})
-    return jsonify({"message": f"User {user['username']} promoted to admin"}), 200
+#     mongo.db.users.update_one({"_id": ObjectId(user_id)}, {"$set": {"role": "admin"}})
+#     return jsonify({"message": f"User {user['username']} promoted to admin"}), 200
 
 
-@users_blueprint.route("/admin/demote/<user_id>", methods=["POST"])
-@jwt_required()
-@role_required("admin")
-def demote_user(user_id):
-    user = mongo.db.users.find_one({"_id": ObjectId(user_id)})
+# @users_blueprint.route("/admin/demote/<user_id>", methods=["POST"])
+# @jwt_required()
+# @role_required("admin")
+# def demote_user(user_id):
+#     user = mongo.db.users.find_one({"_id": ObjectId(user_id)})
 
-    if not user:
-        return jsonify({"error": "User not found"}), 404
+#     if not user:
+#         return jsonify({"error": "User not found"}), 404
 
-    if user["role"] == "user":
-        return jsonify({"message": "User is already a regular user"}), 200
+#     if user["role"] == "user":
+#         return jsonify({"message": "User is already a regular user"}), 200
 
-    mongo.db.users.update_one({"_id": ObjectId(user_id)}, {"$set": {"role": "user"}})
-    return jsonify({"message": f"User {user['username']} demoted to user"}), 200
+#     mongo.db.users.update_one({"_id": ObjectId(user_id)}, {"$set": {"role": "user"}})
+#     return jsonify({"message": f"User {user['username']} demoted to user"}), 200

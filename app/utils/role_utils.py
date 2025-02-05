@@ -9,8 +9,9 @@ def role_required(role):
         @wraps(fn)
         def wrapper(*args, **kwargs):
             
-            identity = get_jwt_identity()  
-            user = mongo.db.users.find_one({"email": identity})
+            identity = get_jwt_identity()
+            print(identity)  
+            user = mongo.db.users.find_one({"_id": ObjectId(identity)})
 
             if not user:
                 return jsonify({"error": "User not found"}), 404

@@ -26,7 +26,7 @@ def user_data():
         "username": "user",
         "email": "user@example.com",
         "password": "userpassword",
-        # "role": "admin",
+        "role": "admin",
     }
 
 
@@ -59,10 +59,12 @@ def setup_user_in_db(user_data):
         mongo.db.users.insert_one(user_model)
 
         logging.info(f"Inserted user: {user_data['email']}")
+
+        user_in_db = mongo.db.users.find_one({"email": user_data["email"]})
     else:
         logging.info(f"User {user_data['email']} already exists.")
 
-    yield
+    yield user_in_db
 
     mongo.db.users.delete_one({"email": user_data["email"]})
     logging.info(f"Test user deleted {user_data["email"]}")
