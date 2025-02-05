@@ -1,9 +1,6 @@
 import re
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import (
-    create_access_token,
-    create_refresh_token
-)
+from flask_jwt_extended import create_access_token, create_refresh_token
 from werkzeug.security import check_password_hash, generate_password_hash
 from app.models import database_models
 from .. import mongo
@@ -13,12 +10,14 @@ auth_blueprint = Blueprint("auth", __name__)
 
 EMAIL_REGEX = r"^[a-zA-Z0-9][a-zA-Z0-9_.+-]*@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$"
 
+
 # Root endpoint
 @auth_blueprint.route("/", methods=["GET"])
 def index():
     return jsonify({"msg": "Welcome to Flask-based API's Application"}), 200
 
-# Signup endpoint 
+
+# Signup endpoint
 @auth_blueprint.route("/signup", methods=["POST"])
 def signup():
     data = request.json
@@ -57,7 +56,6 @@ def signup():
 
     user_model = database_models.get_user_model()
 
-
     user_model["username"] = username
     user_model["email"] = email
     user_model["password"] = hashed_password
@@ -68,7 +66,7 @@ def signup():
     return jsonify({"message": "User registered successfully"}), 201
 
 
-# Login endpoint 
+# Login endpoint
 @auth_blueprint.route("/login", methods=["POST"])
 def login():
     data = request.json
