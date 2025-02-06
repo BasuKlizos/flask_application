@@ -47,10 +47,20 @@ def signup():
     if mongo.db.users.find_one({"email": email}):
         return jsonify({"error": "Email already exists"}), 400
 
-    role = data.get("role", "user").strip().lower()
+    # role = data.get("role", "user").strip().lower()
 
-    if role not in ["user", "admin"]:
-        return jsonify({"error": "Invalid role specified"}), 400
+    # if role not in ["user", "admin"]:
+    #     return jsonify({"error": "Invalid role specified"}), 400
+
+    if "role" in data:
+        return jsonify({"error": "You cannot specify the role during signup. The role is automatically assigned."}), 400
+
+    existing_role = mongo.db.users.find_one({"role": "admin"})
+
+    if not existing_role:
+        role = "admin"
+    else:
+        role = "user"
 
     hashed_password = generate_password_hash(password)
 

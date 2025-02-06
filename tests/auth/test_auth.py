@@ -87,13 +87,13 @@ def test_signup_role_invalid(client):
         "username": "newuser",
         "email": "newuser@gmail.com",
         "password": "1234",
-        "role": "guest",
+        "role": "admin",
     }
 
     response = client.post("/signup", json=user_data)
 
     assert response.status_code == 400
-    assert response.json["error"] == "Invalid role specified"
+    assert response.json["error"] == "You cannot specify the role during signup. The role is automatically assigned."
 
 
 def test_login_valid(client, setup_user_in_db, login_data):

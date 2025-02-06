@@ -26,7 +26,6 @@ def user_data():
         "username": "user",
         "email": "user@example.com",
         "password": "userpassword",
-        "role": "admin",
     }
 
 
@@ -42,9 +41,15 @@ def setup_user_in_db(user_data):
 
     existing_user = mongo.db.users.find_one({"email": user_data["email"]})
 
-    role = user_data.get("role", "user").strip().lower()
-    if not role in ["admin", "user"]:
-        logging.info(f"Invalid role provided: {role}")
+    # role = user_data.get("role", "user").strip().lower()
+    # if not role in ["admin", "user"]:
+    #     logging.info(f"Invalid role provided: {role}")
+
+    existing_role = mongo.db.users.find_one({"role":"admin"})
+    if not existing_role:
+        role = "admin"
+    else:
+        role = "user"  
 
     if not existing_user:
         user_model = database_models.get_user_model()
